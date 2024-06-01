@@ -7,6 +7,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from config import Config
+from datetime import datetime
 
 class EmailSender:
     SCOPES = ['https://www.googleapis.com/auth/gmail.send']
@@ -31,18 +32,20 @@ class EmailSender:
         service = build('gmail', 'v1', credentials=creds)
         return service
 
-    def create_message(self, subject: str, closing_prices: dict, previous_closing_prices: dict):
+    def create_message(self, subject: str, closing_prices: dict, first_closing_prices: dict):
         message = MIMEMultipart('alternative')
         message['to'] = ', '.join(Config.RECIPIENT_EMAILS)
         message['from'] = Config.SENDER_EMAIL
         message['subject'] = subject
 
         # Create the plain-text part
-        plain_text = "Ticker\tPrice\t% Change\n"
+        plain_text = f"{subject}\nTicker\tPrice\t% Change\n"
         for ticker, price in closing_prices.items():
-            prev_price = previous_closing_prices.get(ticker, price)
-            print(prev_price)
-            pct_change = ((price - prev_price) / prev_price) * 100 if prev_price != 0 else 0
+            first_price = first_closing_prices.get(ticker, price)
+            print(first_price)
+            print("price", price)
+            pct_change = ((price - first_price) / first_price) * 100 # if first_price != 0 else 0
+            print("pct_change: ", pct_change)
             plain_text += f"{ticker.split('.')[0]}\t{price:.2f}\t{pct_change:.2f}%\n"
 
         part1 = MIMEText(plain_text, 'plain')
@@ -50,14 +53,15 @@ class EmailSender:
         # Generate the table rows for the HTML part
         table_rows = ""
         for ticker, price in closing_prices.items():
-            prev_price = previous_closing_prices.get(ticker, price)
-            pct_change = ((price - prev_price) / prev_price) * 100 if prev_price != 0 else 0
+            first_price = first_closing_prices.get(ticker, price)
+            pct_change = ((price - first_price) / first_price) * 100 if first_price != 0 else 0
             table_rows += f"<tr><td>{ticker.split('.')[0]}</td><td>{price:.2f}</td><td>{pct_change:.2f}%</td></tr>"
 
         # Read and format the HTML template
         with open('asset_tracker/email_template.html', 'r') as file:
             html_template = file.read()
         html_content = html_template.replace('{{table_rows}}', table_rows)
+        html_content = html_content.replace('{{report_title}}', subject)
 
         part2 = MIMEText(html_content, 'html')
 
