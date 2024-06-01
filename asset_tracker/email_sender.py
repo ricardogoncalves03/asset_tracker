@@ -42,10 +42,7 @@ class EmailSender:
         plain_text = f"{subject}\nTicker\tPrice\t% Change\n"
         for ticker, price in closing_prices.items():
             first_price = first_closing_prices.get(ticker, price)
-            print(first_price)
-            print("price", price)
             pct_change = ((price - first_price) / first_price) * 100 # if first_price != 0 else 0
-            print("pct_change: ", pct_change)
             plain_text += f"{ticker.split('.')[0]}\t{price:.2f}\t{pct_change:.2f}%\n"
 
         part1 = MIMEText(plain_text, 'plain')
