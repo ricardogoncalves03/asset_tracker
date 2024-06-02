@@ -13,18 +13,21 @@ class EmailSender:
     SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
     def __init__(self):
+        self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.service = self.get_gmail_service()
 
     def get_gmail_service(self):
         creds = None
+        token_path = os.path.join(self.base_dir, 'token.json')
+        credentials_path = os.path.join(self.base_dir, 'credentials.json')
         if os.path.exists('token.json'):
-            creds = Credentials.from_authorized_user_file('token.json', self.SCOPES)
+            creds = Credentials.from_authorized_user_file(token_path, self.SCOPES)
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', self.SCOPES
+                    credentials_path, self.SCOPES
                 )
                 creds = flow.run_local_server(port=0)
             with open('token.json', 'w') as token:
@@ -55,7 +58,8 @@ class EmailSender:
             table_rows += f"<tr><td>{ticker.split('.')[0]}</td><td>{price:.2f}</td><td>{pct_change:.2f}%</td></tr>"
 
         # Read and format the HTML template
-        with open('asset_tracker/email_template.html', 'r') as file:
+        email_template_path = os.path.join(self.base_dir, 'asset_tracker', 'email_template.html')
+        with open(email_template_path, 'r') as file:
             html_template = file.read()
         html_content = html_template.replace('{{table_rows}}', table_rows)
         html_content = html_content.replace('{{report_title}}', subject)
