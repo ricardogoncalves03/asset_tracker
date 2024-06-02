@@ -1,7 +1,6 @@
-#Asset Tracker
+# Asset Tracker
 
-Asset Tracker is a Python-based tool designed to automate the process of tracking and analyzing the closing prices of specified assets, such as ETFs or Stocks. 
-The tool can be configured to send daily, weekly, or monthly email reports with the latest closing prices and percentage changes.
+Asset Tracker is a Python-based tool designed to automate the process of tracking and analyzing the closing prices of specified assets, such as ETFs or Stocks. The tool can be configured to send daily, weekly, or monthly email reports with the latest closing prices and percentage changes.
 
 ## Features
 
