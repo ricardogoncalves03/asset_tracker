@@ -3,7 +3,13 @@ from email_sender import EmailSender
 from datetime import datetime, timedelta
 
 
-def get_report_type():
+def get_report_type() -> str:
+    """
+    Determines the type of report to generate based on the current date.
+
+    Returns:
+        str: The report type ('daily', 'weekly', 'monthly').
+    """
     today = datetime.today()
     if today.weekday() in [5, 6]:  # Saturday or Sunday
         friday = today - timedelta(days=(today.weekday() - 4))
@@ -17,6 +23,9 @@ def get_report_type():
 
 
 def main():
+    """
+    Main function to fetch closing prices, create and send the email report.
+    """
     tickers = ["VWCE.DE", "QDVE.DE", "VUAA.DE", "SXRV.DE"]
     report_type = get_report_type()
 

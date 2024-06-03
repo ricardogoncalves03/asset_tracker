@@ -35,9 +35,9 @@ Asset Tracker is a Python-based tool designed to automate the process of trackin
     - Enable the Gmail API and download the `credentials.json` file.
     - Place the `credentials.json` file in the root directory of the project.
 
-4. **Set up the virtual environment**:
+4. **Activate the virtual environment**:
     ```sh
-    source $(poetry env info --path)/bin/activate
+    poetry shell
     ```
 
 5. **Run the main script**:
@@ -69,9 +69,17 @@ To schedule the script to run daily at 18:00 Lisbon time on weekdays, you can se
 
 ### Environment Variables
 
-Ensure the following environment variables are set:
+Ensure the following environment variables are set (you can place them in a `.env` file for convenience):
 
+- `SENDER_EMAIL`: Your Gmail address.
+- `RECIPIENT_EMAILS`: Comma-separated list of recipient emails.
 - `PYTHONPATH` (optional): Points to the project directory.
+
+Example `.env` file:
+```env
+SENDER_EMAIL=your-email@gmail.com
+RECIPIENT_EMAILS=recipient1@example.com,recipient2@example.com
+```
 
 ### Email Configuration
 
